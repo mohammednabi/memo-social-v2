@@ -6,8 +6,11 @@ import Container from "@mui/material/Container";
 import ProfileTabs from "../../components/ProfileTabs";
 import ProfileLayoutContents from "../../components/ProfileLayoutContents";
 
-
-export default function ProfileLayout({ children }) {
+export default function ProfileLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <Container maxWidth="lg" className="px-28">
       <ProfileLayoutContents />

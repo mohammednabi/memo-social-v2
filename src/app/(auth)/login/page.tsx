@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import Link from "next/link";
 import React, { useContext, useState } from "react";
@@ -18,7 +19,7 @@ import { StoreContext } from "../../contexts/StoreContext";
 
 import { observer } from "mobx-react-lite";
 
- const LoginPage=()=> {
+const LoginPage = () => {
   const [userInfo, setUserInfo] = useState({
     email: "",
     password: "",
@@ -33,10 +34,10 @@ import { observer } from "mobx-react-lite";
   const provider = new GoogleAuthProvider();
 
   const login = async (email: string, pass: string) => {
-  
-    setLoading(true)
-    await signInWithEmailAndPassword(auth, email, pass).then((user) => {
-      const data = {
+    setLoading(true);
+    await signInWithEmailAndPassword(auth, email, pass)
+      .then((user) => {
+        const data = {
           data: {
             bio: "",
             followers: [],
@@ -44,50 +45,49 @@ import { observer } from "mobx-react-lite";
             link: "",
             username: "",
           },
-      };
-      
-      currentUser.addUserToUserCollection(user.user.uid, data).then(() => {
-        setLoading(false)
-        router.push("/")
-        
-      }).catch((err) => {
-        console.log(err.message)
-      });
-    }).catch((err) => {
-      console.log(err.message)
-      setErr(err.message.slice(9))
-      setLoading(false)
-    })
+        };
 
-
-  };
-
-  const googleLogin =async (auth: Auth, provider: AuthProvider) => {
- await   signInWithPopup(auth, provider)
-      .then((user) => {
-      
-          const data = {
-            data: {
-              bio: "",
-              followers: [],
-              following: [],
-              link: "",
-              username: "",
-            },
-          };
-
-        currentUser.addUserToUserCollection(user.user.uid, data).then(() => {
-        router.push("/")
-       
-        
-      }).catch((err) => {
-        console.log(err.message)
-      });
+        currentUser
+          .addUserToUserCollection(user.user.uid, data)
+          .then(() => {
+            setLoading(false);
+            router.push("/");
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
       })
       .catch((err) => {
-
         console.log(err.message);
-      
+        setErr(err.message.slice(9));
+        setLoading(false);
+      });
+  };
+
+  const googleLogin = async (auth: Auth, provider: AuthProvider) => {
+    await signInWithPopup(auth, provider)
+      .then((user) => {
+        const data = {
+          data: {
+            bio: "",
+            followers: [],
+            following: [],
+            link: "",
+            username: "",
+          },
+        };
+
+        currentUser
+          .addUserToUserCollection(user.user.uid, data)
+          .then(() => {
+            router.push("/");
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -174,7 +174,6 @@ import { observer } from "mobx-react-lite";
       </div>
     </div>
   );
-}
+};
 
-
-export default observer (LoginPage)
+export default observer(LoginPage);

@@ -1,19 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
-
-// import PostModal from "@/app/components/PostModal";
-// import { StoreContext } from "@/app/contexts/StoreContext";
-// import { UserContext } from "@/app/contexts/user";
-// import { db, getPosts } from "@/app/firebase/FireBase-config";
-// import usePosts from "@/app/hooks/usePosts";
-// import useTargetPost from "@/app/hooks/useTargetPost";
-// import useUserPosts from "@/app/hooks/useUserPosts";
-
 
 import PostModal from "../../../components/PostModal";
 import { StoreContext } from "../../../contexts/StoreContext";
-// import { UserContext } from "../../../contexts/user";
-import { db, getPosts } from "../../../firebase/FireBase-config";
-
 
 import { Movie, MovieOutlined } from "@mui/icons-material";
 
@@ -25,13 +14,12 @@ import { post } from "../../../../stores/generalCustomTypes";
 
 const ProfilePostsPage = () => {
   // const user = useContext(UserContext);
- 
 
   const [open, setOpen] = useState(false);
   const [mediaType, setMediaType] = useState("");
   const [targetPost, setTargetPost] = useState<post>();
 
-  const { posts,currentUser } = useContext(StoreContext);
+  const { posts, currentUser } = useContext(StoreContext);
 
   const handleClose = () => {
     setOpen(false);
@@ -39,11 +27,8 @@ const ProfilePostsPage = () => {
 
   useEffect(() => {
     posts.getUserPosts(currentUser.signedUser?.uid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser.signedUser.uid, posts.userPosts]);
-
-
-
-  
 
   return (
     <div className="grid grid-cols-3 gap-2">
@@ -64,6 +49,7 @@ const ProfilePostsPage = () => {
               />
             ) : (
               <div
+                key={post.id}
                 onClick={(e) => {
                   // setMediaSrc(e.target.children[0].src);
                   setTargetPost(post);
@@ -72,11 +58,7 @@ const ProfilePostsPage = () => {
                 }}
                 className="cursor-pointer relative w-full aspect-square  flex justify-center items-center"
               >
-                <video
-                  key={post.id}
-                  className="w-full aspect-square object-cover"
-                  muted
-                >
+                <video className="w-full aspect-square object-cover" muted>
                   <source src={post.media} type="video/mp4" />
                 </video>
                 <MovieOutlined className="absolute top-2 right-2 text-white text-2xl" />
@@ -90,7 +72,7 @@ const ProfilePostsPage = () => {
           open={open}
           close={handleClose}
           mediaType={mediaType}
-          targetPostId={targetPost.id}
+          targetPostId={targetPost?.id}
         />
       )}
     </div>

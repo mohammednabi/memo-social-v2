@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
@@ -18,8 +19,7 @@ import { useRouter } from "next/navigation";
 import { StoreContext } from "../../contexts/StoreContext";
 import { observer } from "mobx-react-lite";
 
- const SignupPage=()=> {
-
+const SignupPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [err, setErr] = useState<string>("");
 
@@ -34,51 +34,46 @@ import { observer } from "mobx-react-lite";
   const router = useRouter();
   const provider = new GoogleAuthProvider();
   const register = async (email: string, pass: string) => {
-  
+    setLoading(true);
 
-    setLoading(true)
-
-    await createUserWithEmailAndPassword(auth, email, pass).then((user) => {
-      setLoading(false)
-      router.push("/login")
-    }).catch((err) => {
-      setLoading(false)
-      setErr(err.message.slice(9));
-      console.log(err.message)
-})
-
-
-  };
-
-  const googleLogin =async (auth: Auth, provider: AuthProvider) => {
- await   signInWithPopup(auth, provider)
+    await createUserWithEmailAndPassword(auth, email, pass)
       .then((user) => {
-      
-          const data = {
-            data: {
-              bio: "",
-              followers: [],
-              following: [],
-              link: "",
-              username: "",
-            },
-          };
-
-        currentUser.addUserToUserCollection(user.user.uid, data).then(() => {
-        router.push("/")
-       
-        
-      }).catch((err) => {
-        console.log(err.message)
-      });
+        setLoading(false);
+        router.push("/login");
       })
       .catch((err) => {
-
+        setLoading(false);
+        setErr(err.message.slice(9));
         console.log(err.message);
-      
       });
   };
 
+  const googleLogin = async (auth: Auth, provider: AuthProvider) => {
+    await signInWithPopup(auth, provider)
+      .then((user) => {
+        const data = {
+          data: {
+            bio: "",
+            followers: [],
+            following: [],
+            link: "",
+            username: "",
+          },
+        };
+
+        currentUser
+          .addUserToUserCollection(user.user.uid, data)
+          .then(() => {
+            router.push("/");
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   return (
     <div className="w-screen h-screen grid place-items-center">
@@ -185,7 +180,6 @@ import { observer } from "mobx-react-lite";
       </div>
     </div>
   );
-}
+};
 
-
-export default observer(SignupPage)
+export default observer(SignupPage);
