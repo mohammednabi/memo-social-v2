@@ -13,8 +13,25 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        robooooto: "Robotooo",
+        insta: "insta",
+      },
+      spacing: {
+        112: "30rem",
+        128: "32rem",
+      },
+      aspectRatio: {
+        story: "9/16",
+        portrait: "4/5",
+        instaPost: "3.5/4",
+      },
     },
   },
+  darkMode: "class",
   plugins: [],
+  corePlugins: {
+    preflight: true,
+  },
 };
 export default config;
