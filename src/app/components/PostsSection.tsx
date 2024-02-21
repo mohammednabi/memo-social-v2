@@ -25,7 +25,7 @@ const PostsSection = () => {
   const { posts } = useContext(StoreContext);
 
   const [index, setIndex] = useState(4);
-  const [targetPost, setTargetPost] = useState<post>();
+
   const [open, setOpen] = useState(false);
   // const user = useContext(UserContext);
   const { currentUser } = useContext(StoreContext);
@@ -38,10 +38,6 @@ const PostsSection = () => {
     setOpen(true);
   };
 
-  const handleTargetPost = (post: SetStateAction<post | undefined>) => {
-    setTargetPost(post);
-  };
-
   const increaseIndex = () => {
     setIndex((i) => {
       return i + 4;
@@ -51,6 +47,7 @@ const PostsSection = () => {
   useEffect(() => {
     // posts.getAllPosts();
     posts.getAllPosts2();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts.allPosts]);
 
@@ -64,7 +61,6 @@ const PostsSection = () => {
                 <Post
                   post={post}
                   handleOpen={handleOpen}
-                  handleTargetPost={handleTargetPost}
                   user={currentUser.signedUser}
                   toggleLove={toggleLove}
                 />
@@ -84,8 +80,8 @@ const PostsSection = () => {
           user={currentUser.signedUser}
           open={open}
           close={handleClose}
-          mediaType={targetPost?.mediaType}
-          targetPostId={targetPost?.id}
+          // mediaType={targetPost?.mediaType}
+          // targetPostId={targetPost?.id}
         />
       )}
     </section>

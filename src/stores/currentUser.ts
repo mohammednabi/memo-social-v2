@@ -118,4 +118,10 @@ export class currentUser {
       ...data,
     });
   }
+
+  // personal user functions
+
+  addComment() {}
+
+  addLove() {}
 }

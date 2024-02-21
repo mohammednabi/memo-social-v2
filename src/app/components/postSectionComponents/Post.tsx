@@ -3,7 +3,7 @@
 // import { addingComment, toggleLove } from "@/app/functions/updateDocument";
 import { addingComment, toggleLove } from "../../functions/updateDocument";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import TimeOfPost from "./TimeOfPost";
 // import { post } from "@/stores/generalCustomTypes";
 import { post } from "../../../stores/generalCustomTypes";
@@ -31,11 +31,12 @@ import {
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { StoreContext } from "@/app/contexts/StoreContext";
 
 interface iprops {
   post: post;
   handleOpen: () => void;
-  handleTargetPost: (post: React.SetStateAction<post | undefined>) => void;
+
   user: any;
   toggleLove: (postId: string, likes: string[], user: { uid: string }) => void;
 }
@@ -43,10 +44,12 @@ interface iprops {
 const Post = ({
   post,
   handleOpen,
-  handleTargetPost,
+
   user,
   toggleLove,
 }: iprops) => {
+  const { posts } = useContext(StoreContext);
+
   const [inputComment, setInputComment] = useState("");
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [videoPaused, setVideoPaused] = useState(true);
@@ -237,7 +240,8 @@ const Post = ({
           <IconButton
             onClick={() => {
               handleOpen();
-              handleTargetPost(post);
+
+              posts.setTargetPost = post;
             }}
           >
             <ChatBubbleOutlineOutlined
@@ -287,7 +291,8 @@ const Post = ({
           className="text-stone-950/60 dark:text-white/60 cursor-pointer"
           onClick={() => {
             handleOpen();
-            handleTargetPost(post);
+            // handleTargetPost(post);
+            posts.setTargetPost = post;
           }}
         >
           View all {post.comments.length > 0 && post.comments.length} comments

@@ -219,6 +219,12 @@ export class postsStore {
     this.allPosts = val;
   }
 
+  //
+
+  set setTargetPost(val: post) {
+    this.targetPost = val;
+  }
+
   // add post
 
   addPost = (

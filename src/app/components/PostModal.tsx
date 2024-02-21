@@ -18,20 +18,10 @@ import {
   Stack,
   IconButton,
   Box,
-  Skeleton,
   Snackbar,
   Alert,
   CircularProgress,
   Backdrop,
-  MenuList,
-  MenuItem,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-  DialogActions,
-  Button,
   LinearProgress,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -40,17 +30,7 @@ import React, { use, useContext, useEffect, useState } from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-import { doc, updateDoc } from "firebase/firestore";
-
-import { db } from "../firebase/FireBase-config";
-
-import { v4 as uuidv4 } from "uuid";
-import {
-  addingComment,
-  deletePost,
-  toggleLove,
-  updatePost,
-} from "../functions/updateDocument";
+import { toggleLove } from "../functions/updateDocument";
 
 import PostSettingsModal from "./postModalComponents/PostSettingsModal";
 import AuthorDescription from "./postModalComponents/AuthorDescription";
@@ -63,17 +43,9 @@ interface iProps {
   open: any;
   close: any;
   user: defaultUser;
-  mediaType: string | undefined;
-  targetPostId: string | undefined;
 }
 
-export default function PostModal({
-  open,
-  close,
-  user,
-  mediaType,
-  targetPostId,
-}: iProps) {
+export default function PostModal({ open, close, user }: iProps) {
   const [inputComment, setInputComment] = useState("");
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -86,46 +58,46 @@ export default function PostModal({
   // const targetPost = useTargetPost(targetPostId);
   const { posts } = useContext(StoreContext);
 
-  const addComment = (
-    postId: string,
-    comments: {
-      author: { avatar: string; email: string; id: string; name: string };
-      content: string;
-      id: string;
-    }[],
-    comment: string,
-    user: {
-      uid: any;
-      displayName: any;
-      email?: string;
-      photoURL: any;
-      data?: {
-        bio: string;
-        followers: string[];
-        following: string[];
-        link: string;
-        username: string;
-      };
-    }
-  ) => {
-    addingComment(postId, comments, comment, user)
-      .then(() => {
-        setCommentLoading(false);
-        setAlertMessage("success");
-        setInputComment("");
-      })
-      .catch((err) => {
-        console.log("error adding comment", err);
-        setCommentLoading(false);
-        setAlertMessage("failed");
-      });
-  };
+  // const addComment = (
+  //   postId: string,
+  //   comments: {
+  //     author: { avatar: string; email: string; id: string; name: string };
+  //     content: string;
+  //     id: string;
+  //   }[],
+  //   comment: string,
+  //   user: {
+  //     uid: any;
+  //     displayName: any;
+  //     email?: string;
+  //     photoURL: any;
+  //     data?: {
+  //       bio: string;
+  //       followers: string[];
+  //       following: string[];
+  //       link: string;
+  //       username: string;
+  //     };
+  //   }
+  // ) => {
+  //   addingComment(postId, comments, comment, user)
+  //     .then(() => {
+  //       setCommentLoading(false);
+  //       setAlertMessage("success");
+  //       setInputComment("");
+  //     })
+  //     .catch((err) => {
+  //       console.log("error adding comment", err);
+  //       setCommentLoading(false);
+  //       setAlertMessage("failed");
+  //     });
+  // };
 
-  useEffect(() => {
-    posts.getTargetPost(targetPostId ?? "");
+  // useEffect(() => {
+  //   posts.getTargetPost(targetPostId ?? "");
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetPostId]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [targetPostId]);
 
   const showSnackbar = (openState: boolean | undefined) => {
     return (
@@ -178,7 +150,7 @@ export default function PostModal({
           {alertMessage.length > 0 && showSnackbar(true)}
           {posts.targetPost && !confirmDelete && !loadingDelete && (
             <Stack direction={"row"} className="h-[40rem] w-full">
-              {mediaType?.slice(0, 5) === "image" ? (
+              {posts.targetPost.mediaType?.slice(0, 5) === "image" ? (
                 <img
                   src={open && posts.targetPost.media}
                   alt=""
@@ -347,12 +319,12 @@ export default function PostModal({
                           className="text-blue-600 capitalize "
                           onClick={() => {
                             setCommentLoading(true);
-                            addComment(
-                              posts.targetPost.id,
-                              posts.targetPost.comments,
-                              inputComment,
-                              user
-                            );
+                            // addComment(
+                            //   posts.targetPost.id,
+                            //   posts.targetPost.comments,
+                            //   inputComment,
+                            //   user
+                            // );
                           }}
                         >
                           post
