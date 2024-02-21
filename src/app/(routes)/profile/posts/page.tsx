@@ -71,8 +71,6 @@ const ProfilePostsPage = () => {
           user={currentUser.signedUser}
           open={open}
           close={handleClose}
-          mediaType={mediaType}
-          targetPostId={targetPost?.id}
         />
       )}
     </div>
