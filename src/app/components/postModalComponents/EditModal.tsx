@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 // import { updatePost } from "@/app/functions/updateDocument";
 import { updatePost } from "../../functions/updateDocument";
@@ -18,13 +19,20 @@ import React, { useState } from "react";
 import SuccessfulUpdatedPost from "./SuccessfulUpdatedPost";
 import { SentimentSatisfiedOutlined } from "@mui/icons-material";
 
-const EditModal = ({ open, close, post, closeMenu }) => {
+interface editProps {
+  open: boolean;
+  close: () => void;
+  post: any;
+  closeMenu: () => void;
+}
+
+const EditModal = ({ open, close, post, closeMenu }: editProps) => {
   const [inputComment, setInputComment] = useState(`${post.description}`);
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [postUploaded, setPostUploaded] = useState(false);
 
-  const updateWholePost = (description, postId) => {
+  const updateWholePost = (description: string, postId: any) => {
     setIsUploading(true);
     updatePost(description, postId)
       .then(() => {
@@ -169,7 +177,7 @@ const EditModal = ({ open, close, post, closeMenu }) => {
                         data={data}
                         theme={"auto"}
                         set={"native"}
-                        onEmojiSelect={(e) => {
+                        onEmojiSelect={(e: { native: string }) => {
                           setInputComment(inputComment + e.native);
                           setEmojiClicked(false);
                         }}

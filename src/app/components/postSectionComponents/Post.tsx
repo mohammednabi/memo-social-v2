@@ -1,42 +1,71 @@
-"use client "
+/* eslint-disable @next/next/no-img-element */
+"use client ";
 // import { addingComment, toggleLove } from "@/app/functions/updateDocument";
-import { addingComment,toggleLove } from "../../functions/updateDocument";
+import { addingComment, toggleLove } from "../../functions/updateDocument";
 
 import React, { useEffect, useRef, useState } from "react";
 import TimeOfPost from "./TimeOfPost";
 // import { post } from "@/stores/generalCustomTypes";
 import { post } from "../../../stores/generalCustomTypes";
 
-import { Alert, Avatar, Backdrop, Box, CircularProgress, IconButton, Snackbar, Stack } from "@mui/material";
-import { BookmarkBorderOutlined, ChatBubbleOutlineOutlined, Favorite, FavoriteBorderOutlined, PlayArrow, SentimentSatisfiedOutlined, VolumeOff, VolumeUp } from "@mui/icons-material";
+import {
+  Alert,
+  Avatar,
+  Backdrop,
+  Box,
+  CircularProgress,
+  IconButton,
+  Snackbar,
+  Stack,
+} from "@mui/material";
+import {
+  BookmarkBorderOutlined,
+  ChatBubbleOutlineOutlined,
+  Favorite,
+  FavoriteBorderOutlined,
+  PlayArrow,
+  SentimentSatisfiedOutlined,
+  VolumeOff,
+  VolumeUp,
+} from "@mui/icons-material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-
 interface iprops {
-    post: post
-    handleOpen: () => void
-    handleTargetPost: (post: React.SetStateAction<post>) => void
-    user: any
-    toggleLove:(postId: string, likes: string[], user: {    uid: string;}) => void
+  post: post;
+  handleOpen: () => void;
+  handleTargetPost: (post: React.SetStateAction<post | undefined>) => void;
+  user: any;
+  toggleLove: (postId: string, likes: string[], user: { uid: string }) => void;
 }
 
-
-const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) => {
+const Post = ({
+  post,
+  handleOpen,
+  handleTargetPost,
+  user,
+  toggleLove,
+}: iprops) => {
   const [inputComment, setInputComment] = useState("");
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [videoPaused, setVideoPaused] = useState(true);
-  const [videpAudioMuted, setVidepAudioMuted] = useState(false);
+  const [videoAudioMuted, setVidepAudioMuted] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
 
- 
-  const videoRef = useRef<HTMLVideoElement|null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-
-
-  const addComment = (postId: string, comments: { author: { avatar: string; email: string; id: string; name: string; }; content: string; id: string; }[], comment: string, user: { uid: any; displayName: any; photoURL: any; }) => {
+  const addComment = (
+    postId: string,
+    comments: {
+      author: { avatar: string; email: string; id: string; name: string };
+      content: string;
+      id: string;
+    }[],
+    comment: string,
+    user: { uid: any; displayName: any; photoURL: any }
+  ) => {
     addingComment(postId, comments, comment, user)
       .then(() => {
         setCommentLoading(false);
@@ -52,25 +81,29 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
 
   const toggleVideoPause = () => {
     if (videoPaused) {
-      videoRef.current.pause();
+      videoRef.current?.pause();
     }
 
     if (!videoPaused) {
-      videoRef.current.play();
+      videoRef.current?.play();
     }
     setVideoPaused(!videoPaused);
   };
   const toggleVideoAudio = () => {
-    if (videpAudioMuted) {
-      videoRef.current.muted = true;
+    if (videoAudioMuted) {
+      if (videoRef.current) {
+        videoRef.current.muted = true;
+      }
     }
-    if (!videpAudioMuted) {
-      videoRef.current.muted = false;
+    if (!videoAudioMuted) {
+      if (videoRef.current) {
+        videoRef.current.muted = false;
+      }
     }
-    setVidepAudioMuted(!videpAudioMuted);
+    setVidepAudioMuted(!videoAudioMuted);
   };
 
-  const showSnackbar = (openState) => {
+  const showSnackbar = (openState: boolean | undefined) => {
     return (
       <Snackbar open={openState} autoHideDuration={6000}>
         {alertMessage === "success" ? (
@@ -94,7 +127,7 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
 
   useEffect(() => {
     setTimeout(() => {
-      setAlertMessage(null);
+      setAlertMessage("");
     }, 6000);
   }, [alertMessage]);
 
@@ -106,7 +139,7 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
         width: "30rem",
       }}
     >
-      {alertMessage !== null && showSnackbar(true)}
+      {alertMessage.length > 0 && showSnackbar(true)}
       <Stack direction={"row"} className="     items-center" spacing={1}>
         <Avatar src={post.author.avatar} />
         <h1 className="text-stone-950 dark:text-white font-semibold">
@@ -114,10 +147,12 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
         </h1>
         <Stack direction={"row"} spacing={0.5}>
           <h2 className="text-stone-950/50 dark:text-white/25 ">● </h2>
-                  {/* {calculateTime()} */}
-                  
-                  <TimeOfPost createdTime={post.timestamp.created.time} createdDate={post.timestamp.created.date } />
+          {/* {calculateTime()} */}
 
+          <TimeOfPost
+            createdTime={post.timestamp.created.time}
+            createdDate={post.timestamp.created.date}
+          />
         </Stack>
       </Stack>
       <div className="w-112 aspect-square">
@@ -159,10 +194,10 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
               className={`absolute bottom-0 right-0 transition-all   z-10 bg-stone-800`}
               onClick={toggleVideoAudio}
             >
-              {!videpAudioMuted && (
+              {!videoAudioMuted && (
                 <VolumeOff className="text-3xl  text-white" />
               )}
-              {videpAudioMuted && <VolumeUp className="text-3xl  text-white" />}
+              {videoAudioMuted && <VolumeUp className="text-3xl  text-white" />}
             </IconButton>
           </div>
         )}
@@ -300,7 +335,7 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
               <Box sx={{ position: "absolute", right: "50%" }}>
                 <Picker
                   data={data}
-                  onEmojiSelect={(e: { native: string; }) => {
+                  onEmojiSelect={(e: { native: string }) => {
                     setInputComment(inputComment + e.native);
                     setEmojiClicked(false);
                   }}
@@ -314,6 +349,4 @@ const Post = ({ post, handleOpen, handleTargetPost, user ,toggleLove}:iprops) =>
   );
 };
 
-
-
-export default Post
+export default Post;

@@ -23,7 +23,7 @@ export default function MoreSideBarButton() {
   const [showMenu, setShowMenu] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
-  const menuRef = useRef();
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const logout = () => {
     signOut(auth);
     setLoading(true);
@@ -40,7 +40,11 @@ export default function MoreSideBarButton() {
 
   useEffect(() => {
     const parent = document.getElementById("big-parent");
-    isDarkMode ? parent.classList.add("dark") : parent.classList.remove("dark");
+    if (parent) {
+      isDarkMode
+        ? parent.classList.add("dark")
+        : parent.classList.remove("dark");
+    }
   }, [isDarkMode]);
 
   return (
@@ -70,7 +74,17 @@ export default function MoreSideBarButton() {
   );
 }
 
-const MoreMenuItems = ({ isDarkMode, change, logout, loading }) => {
+const MoreMenuItems = ({
+  isDarkMode,
+  change,
+  logout,
+  loading,
+}: {
+  isDarkMode: boolean;
+  change: (val: boolean) => void;
+  logout: () => void;
+  loading: boolean;
+}) => {
   return (
     <Paper className="w-full bg-stone-50 dark:bg-stone-950 text-stone-950 dark:text-white absolute bottom-12">
       <MenuList>

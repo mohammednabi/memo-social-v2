@@ -17,15 +17,25 @@ import {
 import React, { useState } from "react";
 import EditModal from "./EditModal";
 
+interface postSettingProps {
+  open: boolean;
+  closeModal: () => void;
+  closeMain: () => void;
+  post: any;
+  setConfirmDelete: any;
+  loadingDelete: boolean;
+  setLoadingDelete: any;
+}
+
 const PostSettingsModal = ({
   open,
   closeModal,
   closeMain,
   post,
   setConfirmDelete,
-loadingDelete,
+  loadingDelete,
   setLoadingDelete,
-}) => {
+}: postSettingProps) => {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [openPostEditModal, setOpenPostEditModal] = useState(false);
 
@@ -103,8 +113,8 @@ loadingDelete,
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogContent>
               <DialogContentText className="text-white/75">
-                Do you want to delete this post , this means that you won't be
-                able to retrieve this post again ?
+                Do you want to delete this post , this means that you will not
+                be able to retrieve this post again ?
               </DialogContentText>
             </DialogContent>
             <DialogActions>

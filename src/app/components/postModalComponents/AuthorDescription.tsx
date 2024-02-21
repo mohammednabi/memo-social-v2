@@ -1,7 +1,13 @@
 import { Avatar, Stack } from "@mui/material";
 import React from "react";
 
-const AuthorDescription = ({ name, avatar, content }) => {
+interface authorProps {
+  name: string;
+  avatar: string;
+  content: string;
+}
+
+const AuthorDescription = ({ name, avatar, content }: authorProps) => {
   return (
     <Stack spacing={0.5}>
       <Stack direction={"row"} spacing={2} className="items-center">

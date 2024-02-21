@@ -26,9 +26,9 @@ export const db = getFirestore(app);
 export const postsCol = collection(db, "posts");
 export const postsCol2 = collection(db, "posts2");
 
-export async function getPosts(db) {
+export async function getPosts(db: any) {
   const postsSnapshot = await getDocs(postsCol);
-  let newPosts = [];
+  let newPosts: { id: string }[] = [];
   postsSnapshot.docs.forEach((doc) =>
     newPosts.push({ ...doc.data(), id: doc.id })
   );

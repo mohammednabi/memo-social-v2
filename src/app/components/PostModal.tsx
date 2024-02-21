@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import {
   BookmarkBorderOutlined,
@@ -57,12 +59,12 @@ import SuccessfulDeletePost from "./postModalComponents/SuccessfulDeletePost";
 import { StoreContext } from "../contexts/StoreContext";
 import { defaultUser } from "../../stores/generalCustomTypes";
 
-interface iProps{
-  open: any
-  close: any
-  user:defaultUser
-  mediaType:string
-  targetPostId:string
+interface iProps {
+  open: any;
+  close: any;
+  user: defaultUser;
+  mediaType: string | undefined;
+  targetPostId: string | undefined;
 }
 
 export default function PostModal({
@@ -71,21 +73,41 @@ export default function PostModal({
   user,
   mediaType,
   targetPostId,
-}:iProps) {
+}: iProps) {
   const [inputComment, setInputComment] = useState("");
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // const targetPost = useTargetPost(targetPostId);
-const {posts} = useContext(StoreContext)
+  const { posts } = useContext(StoreContext);
 
-
-  const addComment = (postId, comments, comment, user) => {
+  const addComment = (
+    postId: string,
+    comments: {
+      author: { avatar: string; email: string; id: string; name: string };
+      content: string;
+      id: string;
+    }[],
+    comment: string,
+    user: {
+      uid: any;
+      displayName: any;
+      email?: string;
+      photoURL: any;
+      data?: {
+        bio: string;
+        followers: string[];
+        following: string[];
+        link: string;
+        username: string;
+      };
+    }
+  ) => {
     addingComment(postId, comments, comment, user)
       .then(() => {
         setCommentLoading(false);
@@ -99,14 +121,13 @@ const {posts} = useContext(StoreContext)
       });
   };
 
-
   useEffect(() => {
-    posts.getTargetPost(targetPostId)
-    
-  },[targetPostId])
+    posts.getTargetPost(targetPostId ?? "");
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetPostId]);
 
-  const showSnackbar = (openState) => {
+  const showSnackbar = (openState: boolean | undefined) => {
     return (
       <Snackbar open={openState} autoHideDuration={6000}>
         {alertMessage === "success" ? (
@@ -138,7 +159,7 @@ const {posts} = useContext(StoreContext)
 
   useEffect(() => {
     setTimeout(() => {
-      setAlertMessage(null);
+      setAlertMessage("");
     }, 6000);
   }, [alertMessage]);
 
@@ -154,10 +175,10 @@ const {posts} = useContext(StoreContext)
         <Paper
           className={`bg-stone-950 font-insta flex flex-col items-center text-white rounded-md  h-auto border-none outline-none  min-w-[30rem] w-auto`}
         >
-          {alertMessage !== null && showSnackbar(true)}
-          { posts.targetPost && !confirmDelete && !loadingDelete && (
+          {alertMessage.length > 0 && showSnackbar(true)}
+          {posts.targetPost && !confirmDelete && !loadingDelete && (
             <Stack direction={"row"} className="h-[40rem] w-full">
-              {mediaType.slice(0, 5) === "image" ? (
+              {mediaType?.slice(0, 5) === "image" ? (
                 <img
                   src={open && posts.targetPost.media}
                   alt=""
@@ -168,7 +189,10 @@ const {posts} = useContext(StoreContext)
                   controls
                   className="h-full w-auto object-cover aspect-instaPost "
                 >
-                  <source src={open && posts.targetPost.media} type="video/mp4" />
+                  <source
+                    src={open && posts.targetPost.media}
+                    type="video/mp4"
+                  />
                 </video>
               )}
               <div
@@ -205,8 +229,8 @@ const {posts} = useContext(StoreContext)
                       closeModal={handleEditModalClose}
                       closeMain={close}
                       post={posts.targetPost}
-                      setConfirmDelete = {setConfirmDelete}
-                      loadingDelete = {loadingDelete}
+                      setConfirmDelete={setConfirmDelete}
+                      loadingDelete={loadingDelete}
                       setLoadingDelete={setLoadingDelete}
                     />
                   </Stack>
@@ -255,7 +279,11 @@ const {posts} = useContext(StoreContext)
                       {!posts.targetPost.likes.includes(`${user.uid}`) ? (
                         <IconButton
                           onClick={() => {
-                            toggleLove(posts.targetPost.id, posts.targetPost.likes, user);
+                            toggleLove(
+                              posts.targetPost.id,
+                              posts.targetPost.likes,
+                              user
+                            );
                           }}
                         >
                           <FavoriteBorderOutlined
@@ -266,7 +294,11 @@ const {posts} = useContext(StoreContext)
                       ) : (
                         <IconButton
                           onClick={() => {
-                            toggleLove(posts.targetPost.id, posts.targetPost.likes, user);
+                            toggleLove(
+                              posts.targetPost.id,
+                              posts.targetPost.likes,
+                              user
+                            );
                           }}
                         >
                           <Favorite
@@ -344,7 +376,7 @@ const {posts} = useContext(StoreContext)
                         >
                           <Picker
                             data={data}
-                            onEmojiSelect={(e) => {
+                            onEmojiSelect={(e: { native: string }) => {
                               setInputComment(inputComment + e.native);
                               setEmojiClicked(false);
                             }}

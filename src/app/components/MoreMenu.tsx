@@ -2,14 +2,14 @@
 import { DarkMode, LightMode, Logout, Settings } from "@mui/icons-material";
 import { CircularProgress, Switch } from "@mui/material";
 import React, { useState } from "react";
-import { signOut } from "firebase/auth";
+import { Auth, signOut } from "firebase/auth";
 import { auth } from "../firebase/Firebase-auth";
 
 export default function MoreMenu() {
   const [checked, setChecked] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  const logout = (auth) => {
+  const logout = (auth: Auth) => {
     signOut(auth);
     setLoading(true);
   };

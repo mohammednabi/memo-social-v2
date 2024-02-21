@@ -2,7 +2,7 @@ import { doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { deleteObject, getStorage, ref, uploadBytes } from "firebase/storage";
 import { db } from "../firebase/FireBase-config";
 import { v4 as uuidv4 } from "uuid";
-import { getAuth, updateProfile } from "firebase/auth";
+import { User, getAuth, updateProfile } from "firebase/auth";
 
 export const toggleLove = (
   postId: string,
@@ -98,7 +98,7 @@ export const updatePost = (postDescription: any, postId: any) => {
 
 export const editUserProfile = (username: any, photoURL: any) => {
   const auth = getAuth();
-  return updateProfile(auth.currentUser, {
+  return updateProfile(auth.currentUser ?? ({} as User), {
     displayName: username,
     photoURL: photoURL,
   });
@@ -122,9 +122,7 @@ export const addUser = (
   return setDoc(userRef, userData);
 };
 
-export const uploadAvatarImage = (
-  imageObj: Blob | Uint8Array | ArrayBuffer
-) => {
+export const uploadAvatarImage = (imageObj: File) => {
   if (imageObj === null) return;
   const storage = getStorage();
   const imageRef = ref(storage, `/avatars/${imageObj.name + uuidv4()}`);
@@ -148,7 +146,7 @@ export const uploadAvatarImage = (
 export const updateUserImage = (userId: any, imgUrl: string, data: any) => {
   const userRef = doc(db, "users", `${userId}`);
   const auth = getAuth();
-  updateProfile(auth.currentUser, {
+  updateProfile(auth.currentUser ?? ({} as User), {
     photoURL: imgUrl,
   });
   return updateDoc(userRef, {

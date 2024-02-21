@@ -1,7 +1,13 @@
 import { Avatar, Stack } from "@mui/material";
 import React from "react";
 
-const UserComment = ({ name, avatar, content }) => {
+interface userCommentProps {
+  name: string;
+  avatar: string;
+  content: string;
+}
+
+const UserComment = ({ name, avatar, content }: userCommentProps) => {
   return (
     <Stack spacing={0}>
       <Stack direction={"row"} spacing={2} className="items-center">

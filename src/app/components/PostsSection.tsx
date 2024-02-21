@@ -1,35 +1,12 @@
 "use client";
-import {
-  Favorite,
-  FavoriteBorderOutlined,
-  PlayArrow,
-  VoiceChat,
-  VolumeOff,
-  VolumeUp,
-} from "@mui/icons-material";
-import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import SentimentSatisfiedOutlinedIcon from "@mui/icons-material/SentimentSatisfiedOutlined";
-import {
-  Alert,
-  Avatar,
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Skeleton,
-  Snackbar,
-  Stack,
-} from "@mui/material";
-import React, { useContext, useEffect, useRef, useState } from "react";
 
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { collection, getDocs } from "firebase/firestore";
-import { postsCol } from "../firebase/FireBase-config";
-
+import React, {
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import LoadMoreLoader from "./LoadMoreLoader";
 // import { UserContext } from "../contexts/user";
 import PostModal from "./PostModal";
@@ -61,7 +38,7 @@ const PostsSection = () => {
     setOpen(true);
   };
 
-  const handleTargetPost = (post: React.SetStateAction<post>) => {
+  const handleTargetPost = (post: SetStateAction<post | undefined>) => {
     setTargetPost(post);
   };
 
@@ -74,6 +51,7 @@ const PostsSection = () => {
   useEffect(() => {
     // posts.getAllPosts();
     posts.getAllPosts2();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts.allPosts]);
 
   return (
@@ -106,8 +84,8 @@ const PostsSection = () => {
           user={currentUser.signedUser}
           open={open}
           close={handleClose}
-          mediaType={targetPost.mediaType}
-          targetPostId={targetPost.id}
+          mediaType={targetPost?.mediaType}
+          targetPostId={targetPost?.id}
         />
       )}
     </section>

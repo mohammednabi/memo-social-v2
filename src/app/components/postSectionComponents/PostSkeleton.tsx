@@ -1,8 +1,13 @@
-"use client"
-import { BookmarkBorderOutlined, ChatBubbleOutlineOutlined, FavoriteBorderOutlined, SendOutlined } from "@mui/icons-material";
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import {
+  BookmarkBorderOutlined,
+  ChatBubbleOutlineOutlined,
+  FavoriteBorderOutlined,
+  SendOutlined,
+} from "@mui/icons-material";
 import { Avatar, Skeleton, Stack } from "@mui/material";
 import React from "react";
-
 
 const PostSkeleton = () => {
   return (
@@ -44,19 +49,14 @@ const PostSkeleton = () => {
           >
             <FavoriteBorderOutlined sx={{ fontSize: "2rem", color: "red" }} />
             <ChatBubbleOutlineOutlined sx={{ fontSize: "2rem" }} />
-            <SendOutlined
-              sx={{ fontSize: "2rem" }}
-              className="-rotate-12"
-            />
+            <SendOutlined sx={{ fontSize: "2rem" }} className="-rotate-12" />
           </Stack>
 
           <BookmarkBorderOutlined sx={{ fontSize: "2rem" }} />
         </Stack>
       </Skeleton>
-  
     </Stack>
   );
 };
 
-
-export default PostSkeleton
+export default PostSkeleton;
