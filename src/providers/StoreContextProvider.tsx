@@ -7,10 +7,9 @@ import { StoreContext } from "../app/contexts/StoreContext";
 
 import { store } from "../stores";
 
-
 import React, { useContext } from "react";
 
-const StoreContextProvider = ({ children }) => {
+const StoreContextProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
   );
