@@ -62,7 +62,6 @@ const PostsSection = () => {
                   post={post}
                   handleOpen={handleOpen}
                   user={currentUser.signedUser}
-                  toggleLove={toggleLove}
                 />
 
                 <hr className="opacity-100 dark:opacity-10" />
