@@ -15,18 +15,18 @@ import {
 } from "@mui/material";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import SuccessfulUpdatedPost from "./SuccessfulUpdatedPost";
 import { SentimentSatisfiedOutlined } from "@mui/icons-material";
+import { StoreContext } from "@/app/contexts/StoreContext";
 
 interface editProps {
-  open: boolean;
-  close: () => void;
   post: any;
-  closeMenu: () => void;
 }
 
-const EditModal = ({ open, close, post, closeMenu }: editProps) => {
+const EditModal = ({ post }: editProps) => {
+  const { editModal, settingsModal } = useContext(StoreContext);
+
   const [inputComment, setInputComment] = useState(`${post.description}`);
   const [emojiClicked, setEmojiClicked] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -47,13 +47,13 @@ const EditModal = ({ open, close, post, closeMenu }: editProps) => {
   };
 
   const handleClose = () => {
-    close();
-    closeMenu();
+    editModal.handleClose();
+    settingsModal.handleClose();
   };
 
   return (
     <Modal
-      open={open}
+      open={editModal.open}
       onClose={handleClose}
       className="
       grid place-items-center border-none outline-none

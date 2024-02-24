@@ -1,77 +1,29 @@
 "use client";
 // import { deletePost } from "@/app/functions/updateDocument";
-import { deletePost } from "../../functions/updateDocument";
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
-  Modal,
-  Paper,
-  Stack,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Divider, Modal, Paper, Stack } from "@mui/material";
+import React, { useContext, useState } from "react";
 import EditModal from "./EditModal";
+import { observer } from "mobx-react-lite";
+import { StoreContext } from "@/app/contexts/StoreContext";
+import DeleteModal from "./DeleteModal";
 
 interface postSettingProps {
-  open: boolean;
-  closeModal: () => void;
-  closeMain: () => void;
   post: any;
-  setConfirmDelete: any;
-  loadingDelete: boolean;
-  setLoadingDelete: any;
 }
 
-const PostSettingsModal = ({
-  open,
-  closeModal,
-  closeMain,
-  post,
-  setConfirmDelete,
-  loadingDelete,
-  setLoadingDelete,
-}: postSettingProps) => {
-  const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
-  const [openPostEditModal, setOpenPostEditModal] = useState(false);
+const PostSettingsModal = ({ post }: postSettingProps) => {
+  const { editModal, deleteModal, settingsModal } = useContext(StoreContext);
 
-  const handleOpenDeleteConfirmDialog = () => {
-    setOpenDeleteConfirmDialog(true);
-  };
-
-  const handleCloseDeleteConfirmDialog = () => {
-    setOpenDeleteConfirmDialog(false);
-  };
-
-  const handleOpenEditPostModal = () => {
-    setOpenPostEditModal(true);
-  };
-
-  const handleCloseEditPostModal = () => {
-    setOpenPostEditModal(false);
-  };
-
-  const deleteWholePost = () => {
-    setLoadingDelete(true);
-    deletePost(post.id, post.media)
-      .then(() => {
-        setLoadingDelete(false);
-        setConfirmDelete(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const handleClose = () => {
+    settingsModal.handleClose();
   };
 
   return (
     <>
       <Modal
-        open={open}
-        onClose={closeModal}
+        open={settingsModal.open}
+        onClose={handleClose}
         className="
       grid place-items-center border-none outline-none
     "
@@ -82,7 +34,9 @@ const PostSettingsModal = ({
           <Stack spacing={2} className="items-center justify-center ">
             <button
               className="text-white/75 capitalize px-20"
-              onClick={handleOpenEditPostModal}
+              onClick={() => {
+                editModal.handleOpen();
+              }}
             >
               edit
             </button>
@@ -90,7 +44,7 @@ const PostSettingsModal = ({
             <button
               className="text-red-600 capitalize px-20"
               onClick={() => {
-                handleOpenDeleteConfirmDialog();
+                deleteModal.handleOpen();
               }}
             >
               delete
@@ -99,55 +53,14 @@ const PostSettingsModal = ({
 
           {/* confirm delete dialog  */}
 
-          <Dialog
-            open={openDeleteConfirmDialog}
-            onClose={handleCloseDeleteConfirmDialog}
-            PaperProps={{
-              style: {
-                backgroundColor: "rgb(12 10 9)",
-                color: "white",
-              },
-            }}
-            // className="bg-stone-950"
-          >
-            <DialogTitle>Confirm Delete</DialogTitle>
-            <DialogContent>
-              <DialogContentText className="text-white/75">
-                Do you want to delete this post , this means that you will not
-                be able to retrieve this post again ?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                color="error"
-                onClick={() => {
-                  handleCloseDeleteConfirmDialog();
-                  closeModal();
-
-                  deleteWholePost();
-                }}
-              >
-                Delete
-              </Button>
-              <Button onClick={handleCloseDeleteConfirmDialog} autoFocus>
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
+          {deleteModal.open && <DeleteModal post={post} />}
 
           {/* === confirm delete dialog === */}
         </Paper>
       </Modal>
-      {openPostEditModal && (
-        <EditModal
-          open={openPostEditModal}
-          close={handleCloseEditPostModal}
-          post={post}
-          closeMenu={closeModal}
-        />
-      )}
+      {editModal.open && <EditModal post={post} />}
     </>
   );
 };
 
-export default PostSettingsModal;
+export default observer(PostSettingsModal);

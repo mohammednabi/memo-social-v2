@@ -10,7 +10,7 @@ import React, {
 import LoadMoreLoader from "./LoadMoreLoader";
 // import { UserContext } from "../contexts/user";
 import PostModal from "./PostModal";
-import { addingComment, toggleLove } from "../functions/updateDocument";
+
 import { observer } from "mobx-react-lite";
 import { StoreContext } from "../contexts/StoreContext";
 import Post from "./postSectionComponents/Post";
