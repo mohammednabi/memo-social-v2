@@ -6,6 +6,10 @@ body {
   @apply bg-stone-100 dark:bg-black;
 }
 
+.video-react-control-bar {
+  @apply bg-gradient-to-r from-[rgba(0,244,151,.2)] via-[rgba(0,243,244,.2)] to-[rgba(212,0,244,.2)];
+}
+
 @font-face {
   font-family: Robotooo;
   src: url("/fonts/Roboto-Regular.ttf");

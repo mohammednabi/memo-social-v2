@@ -16,8 +16,7 @@ const ProfilePostsPage = () => {
   // const user = useContext(UserContext);
 
   const [open, setOpen] = useState(false);
-  const [mediaType, setMediaType] = useState("");
-  const [targetPost, setTargetPost] = useState<post>();
+  // const [mediaType, setMediaType] = useState("");
 
   const { posts, currentUser } = useContext(StoreContext);
 
@@ -42,9 +41,10 @@ const ProfilePostsPage = () => {
                 className="cursor-pointer w-full aspect-square object-cover"
                 onClick={(e) => {
                   // setMediaSrc(e.target.src);
-                  setTargetPost(post);
+
                   setOpen(true);
-                  setMediaType("image");
+                  // setMediaType("image");
+                  posts.setTargetPost = post;
                 }}
               />
             ) : (
@@ -52,9 +52,10 @@ const ProfilePostsPage = () => {
                 key={post.id}
                 onClick={(e) => {
                   // setMediaSrc(e.target.children[0].src);
-                  setTargetPost(post);
+
                   setOpen(true);
-                  setMediaType("video");
+                  // setMediaType("video");
+                  posts.setTargetPost = post;
                 }}
                 className="cursor-pointer relative w-full aspect-square  flex justify-center items-center"
               >

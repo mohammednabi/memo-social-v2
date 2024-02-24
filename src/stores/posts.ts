@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import {
   collection,
   getDocs,
@@ -57,44 +57,44 @@ export class postsStore {
     makeAutoObservable(this);
   }
 
-  getAllPosts() {
-    const q = query(postsCol, orderBy("timestamp.created.time", "desc"));
+  // getAllPosts() {
+  //   const q = query(postsCol, orderBy("timestamp.created.time", "desc"));
 
-    // cancel this snapshot because it make some issues
-    onSnapshot(q, (querySnapshot) => {
-      let postList: post[] = [];
-      querySnapshot.forEach((doc) => {
-        postList.push({
-          id: doc.id,
-          author: {
-            avatar: "",
-            email: "",
-            id: "",
-            name: "",
-          },
-          comments: [],
-          description: "",
-          likes: [],
-          media: "",
-          mediaType: "",
-          timestamp: {
-            created: {
-              date: "",
-              time: 0,
-            },
-            updated: {
-              date: "",
-              time: 0,
-            },
-          },
-          ...doc.data(),
-        });
-      });
+  //   // cancel this snapshot because it make some issues
+  //   onSnapshot(q, (querySnapshot) => {
+  //     let postList: post[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       postList.push({
+  //         id: doc.id,
+  //         author: {
+  //           avatar: "",
+  //           email: "",
+  //           id: "",
+  //           name: "",
+  //         },
+  //         comments: [],
+  //         description: "",
+  //         likes: [],
+  //         media: "",
+  //         mediaType: "",
+  //         timestamp: {
+  //           created: {
+  //             date: "",
+  //             time: 0,
+  //           },
+  //           updated: {
+  //             date: "",
+  //             time: 0,
+  //           },
+  //         },
+  //         ...doc.data(),
+  //       });
+  //     });
 
-      // this.allPosts = postList;
-      this.setAllPosts = postList;
-    });
-  }
+  //     // this.allPosts = postList;
+  //     this.setAllPosts = postList;
+  //   });
+  // }
 
   getAllPosts2 = async () => {
     const q = query(postsCol, orderBy("timestamp.created.time", "desc"));
@@ -134,46 +134,48 @@ export class postsStore {
 
   // getting all user posts
 
-  getUserPosts(uid: any) {
+  getUserPosts = async (uid: string) => {
     const q = query(
       postsCol,
       where("author.id", "==", `${uid}`),
       orderBy("timestamp.created.time", "desc")
     );
 
-    onSnapshot(q, (querySnapshot) => {
-      let postList: post[] = [];
-      querySnapshot.forEach((doc) => {
-        postList.push({
-          id: doc.id,
-          author: {
-            avatar: "",
-            email: "",
-            id: "",
-            name: "",
+    const querySnapshot = await getDocs(q);
+    let postList: post[] = [];
+    querySnapshot.forEach((doc) => {
+      postList.push({
+        id: doc.id,
+        author: {
+          avatar: "",
+          email: "",
+          id: "",
+          name: "",
+        },
+        comments: [],
+        description: "",
+        likes: [],
+        media: "",
+        mediaType: "",
+        timestamp: {
+          created: {
+            date: "",
+            time: 0,
           },
-          comments: [],
-          description: "",
-          likes: [],
-          media: "",
-          mediaType: "",
-          timestamp: {
-            created: {
-              date: "",
-              time: 0,
-            },
-            updated: {
-              date: "",
-              time: 0,
-            },
+          updated: {
+            date: "",
+            time: 0,
           },
-          ...doc.data(),
-        });
+        },
+        ...doc.data(),
       });
+    });
+
+    runInAction(() => {
       this.userPosts = postList;
       this.userPostsLength = postList.length;
     });
-  }
+  };
 
   // get target post
 

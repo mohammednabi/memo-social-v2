@@ -48,37 +48,27 @@ const Post = ({
   user,
   toggleLove,
 }: iprops) => {
-  const { posts } = useContext(StoreContext);
+  const { posts, currentUser } = useContext(StoreContext);
 
-  const [inputComment, setInputComment] = useState("");
-  const [emojiClicked, setEmojiClicked] = useState(false);
   const [videoPaused, setVideoPaused] = useState(true);
   const [videoAudioMuted, setVidepAudioMuted] = useState(false);
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const addComment = (
-    postId: string,
-    comments: {
-      author: { avatar: string; email: string; id: string; name: string };
-      content: string;
-      id: string;
-    }[],
-    comment: string,
-    user: { uid: any; displayName: any; photoURL: any }
-  ) => {
-    addingComment(postId, comments, comment, user)
+  const addComment = () => {
+    currentUser.setCommentLoading = true;
+
+    currentUser
+      .addComment(post)
       .then(() => {
-        setCommentLoading(false);
-        setAlertMessage("success");
-        setInputComment("");
+        currentUser.setCommentLoading = false;
+        currentUser.setAlertMessage = "success";
+        currentUser.setInputComment = "";
       })
       .catch((err) => {
-        console.log("error adding comment", err);
-        setCommentLoading(false);
-        setAlertMessage("failed");
+        console.log(err);
+        currentUser.setCommentLoading = false;
+        currentUser.setAlertMessage = "failed";
       });
   };
 
@@ -109,7 +99,7 @@ const Post = ({
   const showSnackbar = (openState: boolean | undefined) => {
     return (
       <Snackbar open={openState} autoHideDuration={6000}>
-        {alertMessage === "success" ? (
+        {currentUser.alertMessage === "success" ? (
           <Alert
             severity="success"
             sx={{ width: "100%", background: "#68c468", color: "white" }}
@@ -130,9 +120,10 @@ const Post = ({
 
   useEffect(() => {
     setTimeout(() => {
-      setAlertMessage("");
+      currentUser.setAlertMessage = "";
     }, 6000);
-  }, [alertMessage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser.alertMessage]);
 
   return (
     <Stack
@@ -142,7 +133,7 @@ const Post = ({
         width: "30rem",
       }}
     >
-      {alertMessage.length > 0 && showSnackbar(true)}
+      {currentUser.alertMessage.length > 0 && showSnackbar(true)}
       <Stack direction={"row"} className="     items-center" spacing={1}>
         <Avatar src={post.author.avatar} />
         <h1 className="text-stone-950 dark:text-white font-semibold">
@@ -298,51 +289,52 @@ const Post = ({
           View all {post.comments.length > 0 && post.comments.length} comments
         </h2>
         <Grid2 container>
-          <Grid2 xs={inputComment.length > 0 ? 10 : 11}>
+          <Grid2 xs={currentUser.inputComment.length > 0 ? 10 : 11}>
             <input
-              value={inputComment}
+              value={currentUser.inputComment}
               placeholder="Add a comment..."
               className="w-full h-10 p-3 pl-0 text-stone-950/90 dark:text-white/90 bg-transparent border-none outline-none resize-none"
               onChange={(e) => {
-                setInputComment(e.target.value);
+                // setInputComment(e.target.value);
+                currentUser.setInputComment = e.target.value;
               }}
             />
           </Grid2>
           <Grid2
-            xs={inputComment.length > 0 ? 2 : 1}
+            xs={currentUser.inputComment.length > 0 ? 2 : 1}
             container
             sx={{ display: "flex", gap: "" }}
           >
-            {inputComment.length > 0 && (
+            {currentUser.inputComment.length > 0 && (
               <button
                 className="text-blue-600 capitalize "
-                onClick={() => {
-                  setCommentLoading(true);
-                  addComment(post.id, post.comments, inputComment, user);
-                }}
+                onClick={addComment}
               >
                 post
               </button>
             )}
-            {inputComment.length > 0 && commentLoading && (
-              <Backdrop open={true} className="text-white">
-                <CircularProgress color="inherit" size={100} />
-              </Backdrop>
-            )}
+            {currentUser.inputComment.length > 0 &&
+              currentUser.commentLoading && (
+                <Backdrop open={true} className="text-white">
+                  <CircularProgress color="inherit" size={100} />
+                </Backdrop>
+              )}
             <IconButton
               onClick={() => {
-                setEmojiClicked(!emojiClicked);
+                // setEmojiClicked(!emojiClicked);
+                currentUser.setEmojiclicked = !currentUser.emojiClicked;
               }}
             >
               <SentimentSatisfiedOutlined className="text-stone-950 dark:text-white text-lg cursor-pointer" />
             </IconButton>
-            {emojiClicked && (
+            {currentUser.emojiClicked && (
               <Box sx={{ position: "absolute", right: "50%" }}>
                 <Picker
                   data={data}
                   onEmojiSelect={(e: { native: string }) => {
-                    setInputComment(inputComment + e.native);
-                    setEmojiClicked(false);
+                    currentUser.setInputComment =
+                      currentUser.inputComment + e.native;
+                    currentUser.setEmojiclicked = false;
                   }}
                 />
               </Box>

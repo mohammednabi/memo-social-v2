@@ -10,12 +10,15 @@ import {
   setDoc,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 // import { db, postsCol } from "@/app/firebase/FireBase-config";
 import { db, postsCol } from "../app/firebase/FireBase-config";
 
 import { defaultUser, post } from "./generalCustomTypes";
+
+import { v4 as uuidv4 } from "uuid";
 
 export class currentUser {
   signedUser: defaultUser = {
@@ -33,6 +36,13 @@ export class currentUser {
   };
   userPosts: post[] = [];
   userPostsLength: number = 0;
+
+  // user states that related to post
+
+  inputComment: string = "";
+  emojiClicked: boolean = false;
+  commentLoading: boolean = false;
+  alertMessage: string = "";
 
   constructor() {
     makeAutoObservable(this);
@@ -121,7 +131,41 @@ export class currentUser {
 
   // personal user functions
 
-  addComment() {}
+  addComment = async (post: post) => {
+    const commentRef = doc(db, "posts", post.id);
+
+    const commentData = {
+      id: uuidv4(),
+      content: this.inputComment,
+      author: {
+        id: `${this.signedUser.uid}`,
+        name: this.signedUser.displayName,
+        avatar: this.signedUser.photoURL,
+      },
+    };
+
+    return updateDoc(commentRef, {
+      comments: [...post.comments, commentData],
+    });
+  };
 
   addLove() {}
+
+  // all states setting functions
+
+  set setInputComment(val: string) {
+    this.inputComment = val;
+  }
+
+  set setAlertMessage(val: string) {
+    this.alertMessage = val;
+  }
+
+  set setEmojiclicked(val: boolean) {
+    this.emojiClicked = val;
+  }
+
+  set setCommentLoading(val: boolean) {
+    this.commentLoading = val;
+  }
 }

@@ -38,6 +38,9 @@ import UserComment from "./postModalComponents/UserComment";
 import SuccessfulDeletePost from "./postModalComponents/SuccessfulDeletePost";
 import { StoreContext } from "../contexts/StoreContext";
 import { defaultUser } from "../../stores/generalCustomTypes";
+import { Player } from "video-react";
+// import "node_modules/video-react/dist/video-react.css"; // import css
+import "video-react/dist/video-react.css"; // import css
 
 interface iProps {
   open: any;
@@ -46,63 +49,34 @@ interface iProps {
 }
 
 export default function PostModal({ open, close, user }: iProps) {
-  const [inputComment, setInputComment] = useState("");
-  const [emojiClicked, setEmojiClicked] = useState(false);
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // const targetPost = useTargetPost(targetPostId);
-  const { posts } = useContext(StoreContext);
+  const { posts, currentUser } = useContext(StoreContext);
 
-  // const addComment = (
-  //   postId: string,
-  //   comments: {
-  //     author: { avatar: string; email: string; id: string; name: string };
-  //     content: string;
-  //     id: string;
-  //   }[],
-  //   comment: string,
-  //   user: {
-  //     uid: any;
-  //     displayName: any;
-  //     email?: string;
-  //     photoURL: any;
-  //     data?: {
-  //       bio: string;
-  //       followers: string[];
-  //       following: string[];
-  //       link: string;
-  //       username: string;
-  //     };
-  //   }
-  // ) => {
-  //   addingComment(postId, comments, comment, user)
-  //     .then(() => {
-  //       setCommentLoading(false);
-  //       setAlertMessage("success");
-  //       setInputComment("");
-  //     })
-  //     .catch((err) => {
-  //       console.log("error adding comment", err);
-  //       setCommentLoading(false);
-  //       setAlertMessage("failed");
-  //     });
-  // };
+  const addComment = () => {
+    currentUser.setCommentLoading = true;
 
-  // useEffect(() => {
-  //   posts.getTargetPost(targetPostId ?? "");
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [targetPostId]);
+    currentUser
+      .addComment(posts.targetPost)
+      .then(() => {
+        currentUser.setCommentLoading = false;
+        currentUser.setAlertMessage = "success";
+        currentUser.setInputComment = "";
+      })
+      .catch((err) => {
+        console.log(err);
+        currentUser.setCommentLoading = false;
+        currentUser.setAlertMessage = "failed";
+      });
+  };
 
   const showSnackbar = (openState: boolean | undefined) => {
     return (
       <Snackbar open={openState} autoHideDuration={6000}>
-        {alertMessage === "success" ? (
+        {currentUser.alertMessage === "success" ? (
           <Alert
             severity="success"
             sx={{ width: "100%", background: "#68c468", color: "white" }}
@@ -131,9 +105,10 @@ export default function PostModal({ open, close, user }: iProps) {
 
   useEffect(() => {
     setTimeout(() => {
-      setAlertMessage("");
+      currentUser.setAlertMessage = "";
     }, 6000);
-  }, [alertMessage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser.alertMessage]);
 
   return (
     <>
@@ -147,25 +122,35 @@ export default function PostModal({ open, close, user }: iProps) {
         <Paper
           className={`bg-stone-950 font-insta flex flex-col items-center text-white rounded-md  h-auto border-none outline-none  min-w-[30rem] w-auto`}
         >
-          {alertMessage.length > 0 && showSnackbar(true)}
+          {currentUser.alertMessage.length > 0 && showSnackbar(true)}
           {posts.targetPost && !confirmDelete && !loadingDelete && (
             <Stack direction={"row"} className="h-[40rem] w-full">
               {posts.targetPost.mediaType?.slice(0, 5) === "image" ? (
                 <img
                   src={open && posts.targetPost.media}
                   alt=""
-                  className="h-full w-auto object-cover aspect-instaPost skeleton"
+                  loading="lazy"
+                  className="h-full w-auto object-contain aspect-instaPost skeleton"
                 />
               ) : (
-                <video
-                  controls
-                  className="h-full w-auto object-cover aspect-instaPost "
-                >
-                  <source
-                    src={open && posts.targetPost.media}
-                    type="video/mp4"
-                  />
-                </video>
+                // <video
+                //   controls
+                //   className="h-full w-auto object-contain aspect-instaPost "
+                // >
+                //   <source
+                //     src={open && posts.targetPost.media}
+                //     type="video/mp4"
+                //   />
+                //   </video>
+
+                <div className="h-full w-auto object-contain aspect-instaPost grid place-items-center">
+                  <Player autoPlay>
+                    <source
+                      src={open && posts.targetPost.media}
+                      type="video/mp4"
+                    />
+                  </Player>
+                </div>
               )}
               <div
                 className="grid w-[30rem] h-[40rem] aspect-instaPost p-5 text-white   "
@@ -184,11 +169,17 @@ export default function PostModal({ open, close, user }: iProps) {
                       spacing={2}
                       className="items-center"
                     >
-                      <Avatar
+                      {/* <Avatar
                         src={open && posts.targetPost.author.avatar}
                         className="w-10 h-10"
                       />
-                      <h1>{open && posts.targetPost.author.name}</h1>
+                      <h1>{open && posts.targetPost.author.name}</h1> */}
+
+                      <AuthorDescription
+                        name={posts.targetPost.author.name}
+                        avatar={posts.targetPost.author.avatar}
+                        content={posts.targetPost.description}
+                      />
                     </Stack>
                     {user.uid === posts.targetPost.author.id && (
                       <IconButton onClick={handleEditModalOpen}>
@@ -210,12 +201,6 @@ export default function PostModal({ open, close, user }: iProps) {
                 </Stack>
 
                 <Stack spacing={1} className="py-5 h-auto overflow-auto">
-                  <AuthorDescription
-                    name={posts.targetPost.author.name}
-                    avatar={posts.targetPost.author.avatar}
-                    content={posts.targetPost.description}
-                  />
-                  <Divider className="w-full  bg-stone-900" />
                   <Stack className="pl-3  h-auto">
                     {open && posts.targetPost.comments.length > 0 ? (
                       posts.targetPost.comments.map((comment) => (
@@ -299,58 +284,58 @@ export default function PostModal({ open, close, user }: iProps) {
 
                 <Stack>
                   <Grid2 container>
-                    <Grid2 xs={inputComment.length > 0 ? 10 : 11}>
+                    <Grid2 xs={currentUser.inputComment.length > 0 ? 10 : 11}>
                       <input
-                        value={inputComment}
+                        value={currentUser.inputComment}
                         placeholder="Add a comment..."
                         className="w-full h-10 p-3 pl-0 text-stone-950/90 dark:text-white/90 bg-transparent border-none outline-none resize-none"
                         onChange={(e) => {
-                          setInputComment(e.target.value);
+                          // setInputComment(e.target.value);
+                          currentUser.setInputComment = e.target.value;
                         }}
                       />
                     </Grid2>
                     <Grid2
-                      xs={inputComment.length > 0 ? 2 : 1}
+                      xs={currentUser.inputComment.length > 0 ? 2 : 1}
                       container
                       sx={{ display: "flex", gap: "" }}
                     >
-                      {inputComment.length > 0 && (
+                      {currentUser.inputComment.length > 0 && (
                         <button
                           className="text-blue-600 capitalize "
                           onClick={() => {
-                            setCommentLoading(true);
-                            // addComment(
-                            //   posts.targetPost.id,
-                            //   posts.targetPost.comments,
-                            //   inputComment,
-                            //   user
-                            // );
+                            currentUser.setCommentLoading = true;
+
+                            addComment();
                           }}
                         >
                           post
                         </button>
                       )}
-                      {inputComment.length > 0 && commentLoading && (
-                        <Backdrop open={true} className="text-white">
-                          <CircularProgress color="inherit" size={100} />
-                        </Backdrop>
-                      )}
+                      {currentUser.inputComment.length > 0 &&
+                        currentUser.commentLoading && (
+                          <Backdrop open={true} className="text-white">
+                            <CircularProgress color="inherit" size={100} />
+                          </Backdrop>
+                        )}
                       <IconButton
                         onClick={() => {
-                          setEmojiClicked(!emojiClicked);
+                          currentUser.setEmojiclicked =
+                            !currentUser.emojiClicked;
                         }}
                       >
                         <SentimentSatisfiedOutlined className="text-stone-950 dark:text-white text-lg cursor-pointer" />
                       </IconButton>
-                      {emojiClicked && (
+                      {currentUser.emojiClicked && (
                         <Box
                           sx={{ position: "absolute", right: 0, bottom: "20%" }}
                         >
                           <Picker
                             data={data}
                             onEmojiSelect={(e: { native: string }) => {
-                              setInputComment(inputComment + e.native);
-                              setEmojiClicked(false);
+                              currentUser.setInputComment =
+                                currentUser.inputComment + e.native;
+                              currentUser.setEmojiclicked = false;
                             }}
                           />
                         </Box>
