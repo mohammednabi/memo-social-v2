@@ -3,4 +3,4 @@
 
 # MEMO Social Sedia App
 
-Memo is a social media app that is cloned from instagram with different style 
+Memo is a social media app that lets you to uplaod some posts with your media like images or video , and upload some reels to share it with puplic and some stories 
