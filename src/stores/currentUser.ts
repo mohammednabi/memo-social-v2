@@ -149,7 +149,47 @@ export class currentUser {
     });
   };
 
-  addLove() {}
+  private addLove = async (post: post) => {
+    const commentRef = doc(db, "posts", post.id);
+
+    // console.log("likes should be added : ");
+    await updateDoc(commentRef, {
+      likes: [...post.likes, `${this.signedUser.uid}`],
+    })
+      .then(() => {
+        return;
+      })
+      .catch((err) => {
+        console.log("error adding love : ", err);
+      });
+  };
+
+  private removeLove = async (post: post) => {
+    const commentRef = doc(db, "posts", post.id);
+    let modifiedLikes = post.likes.filter((like: string) => {
+      if (like !== `${this.signedUser.uid}`) {
+        return like;
+      }
+    });
+
+    await updateDoc(commentRef, {
+      likes: [...modifiedLikes],
+    })
+      .then(() => {
+        return;
+      })
+      .catch((err) => {
+        console.log("error adding love : ", err);
+      });
+  };
+
+  toggleLove = (post: post) => {
+    if (!post.likes.includes(`${this.signedUser.uid}`)) {
+      this.addLove(post);
+    } else {
+      this.removeLove(post);
+    }
+  };
 
   // all states setting functions
 

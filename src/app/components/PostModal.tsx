@@ -41,6 +41,7 @@ import { defaultUser } from "../../stores/generalCustomTypes";
 import { Player } from "video-react";
 // import "node_modules/video-react/dist/video-react.css"; // import css
 import "video-react/dist/video-react.css"; // import css
+import { showSnackbar } from "./postModalComponents/showSnackbar";
 
 interface iProps {
   open: any;
@@ -73,28 +74,6 @@ export default function PostModal({ open, close, user }: iProps) {
       });
   };
 
-  const showSnackbar = (openState: boolean | undefined) => {
-    return (
-      <Snackbar open={openState} autoHideDuration={6000}>
-        {currentUser.alertMessage === "success" ? (
-          <Alert
-            severity="success"
-            sx={{ width: "100%", background: "#68c468", color: "white" }}
-          >
-            Comment Added
-          </Alert>
-        ) : (
-          <Alert
-            severity="error"
-            sx={{ width: "100%", background: "#ba3439", color: "white" }}
-          >
-            failed to add Comment
-          </Alert>
-        )}
-      </Snackbar>
-    );
-  };
-
   const handleEditModalOpen = () => {
     setEditModalOpen(true);
   };
@@ -122,7 +101,8 @@ export default function PostModal({ open, close, user }: iProps) {
         <Paper
           className={`bg-stone-950 font-insta flex flex-col items-center text-white rounded-md  h-auto border-none outline-none  min-w-[30rem] w-auto`}
         >
-          {currentUser.alertMessage.length > 0 && showSnackbar(true)}
+          {currentUser.alertMessage.length > 0 &&
+            showSnackbar(true, currentUser.alertMessage)}
           {posts.targetPost && !confirmDelete && !loadingDelete && (
             <Stack direction={"row"} className="h-[40rem] w-full">
               {posts.targetPost.mediaType?.slice(0, 5) === "image" ? (

@@ -1,21 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 "use client ";
-// import { addingComment, toggleLove } from "@/app/functions/updateDocument";
-import { addingComment, toggleLove } from "../../functions/updateDocument";
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import TimeOfPost from "./TimeOfPost";
-// import { post } from "@/stores/generalCustomTypes";
 import { post } from "../../../stores/generalCustomTypes";
 
 import {
-  Alert,
   Avatar,
   Backdrop,
   Box,
   CircularProgress,
   IconButton,
-  Snackbar,
   Stack,
 } from "@mui/material";
 import {
@@ -32,13 +27,13 @@ import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { StoreContext } from "@/app/contexts/StoreContext";
+import { showSnackbar } from "../postModalComponents/showSnackbar";
 
 interface iprops {
   post: post;
   handleOpen: () => void;
 
   user: any;
-  toggleLove: (postId: string, likes: string[], user: { uid: string }) => void;
 }
 
 const Post = ({
@@ -46,7 +41,6 @@ const Post = ({
   handleOpen,
 
   user,
-  toggleLove,
 }: iprops) => {
   const { posts, currentUser } = useContext(StoreContext);
 
@@ -96,28 +90,6 @@ const Post = ({
     setVidepAudioMuted(!videoAudioMuted);
   };
 
-  const showSnackbar = (openState: boolean | undefined) => {
-    return (
-      <Snackbar open={openState} autoHideDuration={6000}>
-        {currentUser.alertMessage === "success" ? (
-          <Alert
-            severity="success"
-            sx={{ width: "100%", background: "#68c468", color: "white" }}
-          >
-            Comment Added
-          </Alert>
-        ) : (
-          <Alert
-            severity="error"
-            sx={{ width: "100%", background: "#ba3439", color: "white" }}
-          >
-            failed to add Comment
-          </Alert>
-        )}
-      </Snackbar>
-    );
-  };
-
   useEffect(() => {
     setTimeout(() => {
       currentUser.setAlertMessage = "";
@@ -133,7 +105,8 @@ const Post = ({
         width: "30rem",
       }}
     >
-      {currentUser.alertMessage.length > 0 && showSnackbar(true)}
+      {currentUser.alertMessage.length > 0 &&
+        showSnackbar(true, currentUser.alertMessage)}
       <Stack direction={"row"} className="     items-center" spacing={1}>
         <Avatar src={post.author.avatar} />
         <h1 className="text-stone-950 dark:text-white font-semibold">
@@ -208,7 +181,7 @@ const Post = ({
           {!post?.likes.includes(`${user?.uid}`) ? (
             <IconButton
               onClick={() => {
-                toggleLove(post.id, post.likes, user);
+                currentUser.toggleLove(post);
               }}
             >
               <FavoriteBorderOutlined
@@ -219,7 +192,7 @@ const Post = ({
           ) : (
             <IconButton
               onClick={() => {
-                toggleLove(post.id, post.likes, user);
+                currentUser.toggleLove(post);
               }}
             >
               <Favorite
